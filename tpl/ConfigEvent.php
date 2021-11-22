@@ -18,7 +18,7 @@
  * 然后观察一段时间workerman.log看是否有process_timeout异常
  */
 //declare(ticks=1);
-namespace tpl; 
+namespace tpl;
 use Workerman\Http\Client as HttpCli;
 use Workerman\Redis\Client as RedisCli;
 use Workerman\MySQL\Connection as PdoCli;
