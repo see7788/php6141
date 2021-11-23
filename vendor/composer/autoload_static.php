@@ -65,8 +65,7 @@ class ComposerStaticInit4b39cf6acfb549e598004662b24c259a
         ),
         'Workerman\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/replace_vendor',
-            1 => __DIR__ . '/..' . '/workerman/workerman',
+            0 => __DIR__ . '/..' . '/workerman/workerman',
         ),
         'Psr\\Http\\Message\\' => 
         array (
@@ -84,6 +83,8 @@ class ComposerStaticInit4b39cf6acfb549e598004662b24c259a
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Workerman\\Connection\\TcpConnection' => __DIR__ . '/../..' . '/replace_vendor/TcpConnection.php',
+        'Workerman\\Protocols\\Http\\Request' => __DIR__ . '/../..' . '/replace_vendor/Request.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

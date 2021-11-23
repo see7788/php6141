@@ -12,7 +12,7 @@ return array(
     'Workerman\\Psr7\\' => array($vendorDir . '/workerman/psr7/src'),
     'Workerman\\MySQL\\' => array($vendorDir . '/workerman/mysql/src'),
     'Workerman\\Http\\' => array($vendorDir . '/workerman/http-client/src'),
-    'Workerman\\' => array($baseDir . '/replace_vendor', $vendorDir . '/workerman/workerman'),
+    'Workerman\\' => array($vendorDir . '/workerman/workerman'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'GlobalData\\' => array($vendorDir . '/workerman/globaldata/src'),
     'GatewayWorker\\' => array($vendorDir . '/workerman/gateway-worker/src'),
