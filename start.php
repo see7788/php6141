@@ -2,10 +2,10 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use app\ConfigData;
+use Workerman\Worker;
 ini_set('display_errors', 'on');
 
-use tpl\ConfigData;
-use Workerman\Worker;
 if(strpos(strtolower(PHP_OS), 'win') === 0)
 {
     exit("start.php not support windows, please use start_for_win.bat\n");
@@ -29,4 +29,3 @@ if(!defined('GLOBAL_START'))
     define('GLOBAL_START', 1);
     Worker::runAll();
 }
-//都服务器可以使用GatewayWorker\Lib\Gateway控制GatewayWorker\Gateway

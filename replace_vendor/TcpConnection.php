@@ -14,14 +14,89 @@
 namespace Workerman\Connection;
 
 use Workerman\Events\EventInterface;
+use Workerman\Protocols\Http\Chunk;
+use Workerman\Protocols\Http\Response;
+use Workerman\Protocols\Http\ServerSentEvents;
 use Workerman\Worker;
-use \Exception;
 
 /**
  * TcpConnection.
  */
-class TcpConnectionOld extends ConnectionInterface
+class TcpConnection extends ConnectionInterface
 {
+
+
+    function ext_send_sseCreate(): self
+    {
+        $this->send(new Response(200, array('Content-Type' => 'text/event-stream')));
+        return $this;
+    }
+
+    /**
+     * ServerSentEvents constructor.
+     * $data for example ['event'=>'ping', 'data' => 'some thing', 'id' => 1000, 'retry' => 5000]
+     * @param array $data
+     * @return self
+     */
+    function ext_send_sseSend(array $data): self
+    {
+        $this->send(new ServerSentEvents($data));
+        return $this;
+    }
+
+    function ext_send_sseWeb():self
+    {
+        $port = $this->getLocalPort();
+        $this->send(
+            "
+                <script crossorigin='anonymous' src='vue.js'></script>
+                <div id='app'>{{message}}</div>
+                <script>
+                       //let socket = new WebSocket('ws://'+document.domain+':$port');
+                       let sse = new EventSource(document.domain+':$port/sseget');
+                       new Vue({
+                                el: '#app',
+                                data: {
+                                    message: '0',
+                                },
+                                methods: {
+                                    init(e){
+                                        console.log(e)
+                                        this.message = e.data
+                                    }
+                                },
+                                created: function () {
+                                    sse.onmessage=function(e) {
+                                        console.log(e)
+                                    }
+                                   sse.addEventListener('init', this.init); 
+                                   sse.addEventListener('on', this.init);
+                                }
+                             })
+                </script>
+                "
+        );
+        return $this;
+    }
+
+    function ext_send_chunkCreate($str): self
+    {
+        $response = new Response(200, array('Transfer-Encoding' => 'chunked'), $str);
+        $this->send($response);
+        return $this;
+    }
+
+    function ext_send_chunkSend($str = '没有参数'): self
+    {
+        $this->send(new Chunk($str));
+        return $this;
+    }
+
+    function ext_send_chunkClose(): self
+    {
+        $this->send(new Chunk(''));
+        return $this;
+    }
     /**
      * Read buffer size.
      *

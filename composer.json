@@ -1,6 +1,6 @@
 {
     "name"  : "see7788/php6141",
-    "keywords": ["mysql","redis","worker","client","distributed","communication","Gateway"],
+    "keywords": ["composer dump-autoload","mysql","redis","worker","client","distributed","communication","Gateway"],
     "homepage": "https://github.com/see7788/ethereum",
     "license" : "MIT",
     "require": {
@@ -12,7 +12,11 @@
     },
     "autoload": {
         "psr-4": {
-            "tpl\\": "./tpl"
-        }
+            "app\\": "./app",
+            "php6141\\": "./src",
+            "Workerman\\": "./replace_vendor"
+        },
+        "classmap": [],
+        "files": []
     }
 }

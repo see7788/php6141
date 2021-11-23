@@ -18,8 +18,8 @@
  * 然后观察一段时间workerman.log看是否有process_timeout异常
  */
 //declare(ticks=1);
-namespace tpl;
-use Workerman\Http\Client as HttpCli;
+namespace app;
+use Workerman\Http\Client as AsyncHttpCli;
 use Workerman\Redis\Client as RedisCli;
 use Workerman\MySQL\Connection as PdoCli;
 use GatewayWorker\Lib\Gateway as Cli;
@@ -28,15 +28,16 @@ class ConfigEvent
     /**
      * @var PdoCli;
      */
-    static $pdo;
+    static PdoCli $pdo;
     /**
-     * @var HttpCli
+     * @var AsyncHttpCli
      */
-    static $http;
+    static AsyncHttpCli $http;
     /***
      * @var RedisCli
      */
-    static $redis;
+    static RedisCli $redis;
+
 
     public static function onWorkerStart()
     {
@@ -49,7 +50,7 @@ class ConfigEvent
             'douyintaobao'
         );
         self::$redis = new RedisCli('redis://127.0.0.1:6379');
-        self::$http = new HttpCli();
+        self::$http = new AsyncHttpCli();
     }
     public static function onWebSocketConnect($client_id, $data)
     {

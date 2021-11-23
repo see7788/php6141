@@ -6,12 +6,13 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'tpl\\' => array($baseDir . '/tpl'),
+    'php6141\\' => array($baseDir . '/src'),
+    'app\\' => array($baseDir . '/app'),
     'Workerman\\Redis\\' => array($vendorDir . '/workerman/redis/src'),
     'Workerman\\Psr7\\' => array($vendorDir . '/workerman/psr7/src'),
     'Workerman\\MySQL\\' => array($vendorDir . '/workerman/mysql/src'),
     'Workerman\\Http\\' => array($vendorDir . '/workerman/http-client/src'),
-    'Workerman\\' => array($vendorDir . '/workerman/workerman'),
+    'Workerman\\' => array($baseDir . '/replace_vendor', $vendorDir . '/workerman/workerman'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'GlobalData\\' => array($vendorDir . '/workerman/globaldata/src'),
     'GatewayWorker\\' => array($vendorDir . '/workerman/gateway-worker/src'),

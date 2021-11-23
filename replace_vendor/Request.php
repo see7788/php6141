@@ -14,7 +14,6 @@
 namespace Workerman\Protocols\Http;
 
 use Workerman\Connection\TcpConnection;
-use Workerman\Protocols\Http\Session;
 use Workerman\Protocols\Http;
 use Workerman\Worker;
 
@@ -22,8 +21,31 @@ use Workerman\Worker;
  * Class Request
  * @package Workerman\Protocols\Http
  */
-class RequestOld
+class Request
 {
+    function ext_isSSE(): bool
+    {
+        return $this->header('accept') === 'text/event-stream';
+    }
+
+    function ext_path($defRouterName): string
+    {
+        $path=$this->path();
+        $api = $this->get('api');
+        if ($api){
+            $defRouterName=$api;
+        }else if(strstr('/',$path)){
+            $arr = explode('/',  $path);
+            $arr = array_filter($arr);
+            $defRouterName = end($arr);
+        }
+        return strtolower($defRouterName);
+    }
+    function ext_isOnLine(): bool
+    {
+        return $this->connection->getStatus() !== TcpConnection::STATUS_ESTABLISHED;
+    }
+
     /**
      * Connection.
      *

@@ -1,8 +1,8 @@
 <?php
 
-namespace tpl;
-use GatewayWorker\BusinessWorker;
+namespace app;
 use GatewayWorker\Register;
+use GatewayWorker\BusinessWorker;
 use GatewayWorker\Gateway;
 class ConfigData
 {
@@ -11,18 +11,19 @@ class ConfigData
         $registerIp = '127.0.0.1';
         $registerPort = '6006';
 
-        //注册中心
+        //注册Serve,只能一个
         $r = new Register("text://0.0.0.0:$registerPort");
         $r->name = '6006Register';
+       // $r->secretKey='6006Register';//秘钥
 
-        //负责计算：可以分布式，添加多个服务器运行BusinessWorker分摊计算量
+        //调度计算Serve：可以分布式，添加多个服务器运行BusinessWorker分摊计算量
         $b = new BusinessWorker();
         $b->registerAddress = "$registerIp:$registerPort";
-        $b->eventHandler ='tpl\ConfigEvent';
+        $b->eventHandler ='app\ConfigEvent';
         $b->name = '6006BusinessWorker';
         $b->count = 4;
 
-        //负责网络Io：可以分布式，添加多台服务器
+        //网络IoServe：可以分布式，添加多台服务器
         $g = new Gateway("websocket://0.0.0.0:6007");//页面端访问
         $g->registerAddress = "$registerIp:$registerPort";
         $g->name = '6006Gateway';
@@ -32,5 +33,6 @@ class ConfigData
         $g->pingData = '{"type":"ping"}';// 心跳数据
         $g->lanIp = $registerIp;//本机ip，如果是分布式部署，需要设置成本机 IP
 
+        //phpCli，允许多ip， 使用GatewayWorker\Lib\Gateway控制GatewayWorker\Gateway
     }
 }

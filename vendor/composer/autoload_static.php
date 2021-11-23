@@ -11,9 +11,13 @@ class ComposerStaticInit4b39cf6acfb549e598004662b24c259a
     );
 
     public static $prefixLengthsPsr4 = array (
-        't' => 
+        'p' => 
         array (
-            'tpl\\' => 4,
+            'php6141\\' => 8,
+        ),
+        'a' => 
+        array (
+            'app\\' => 4,
         ),
         'W' => 
         array (
@@ -35,9 +39,13 @@ class ComposerStaticInit4b39cf6acfb549e598004662b24c259a
     );
 
     public static $prefixDirsPsr4 = array (
-        'tpl\\' => 
+        'php6141\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/tpl',
+            0 => __DIR__ . '/../..' . '/src',
+        ),
+        'app\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/app',
         ),
         'Workerman\\Redis\\' => 
         array (
@@ -57,7 +65,8 @@ class ComposerStaticInit4b39cf6acfb549e598004662b24c259a
         ),
         'Workerman\\' => 
         array (
-            0 => __DIR__ . '/..' . '/workerman/workerman',
+            0 => __DIR__ . '/../..' . '/replace_vendor',
+            1 => __DIR__ . '/..' . '/workerman/workerman',
         ),
         'Psr\\Http\\Message\\' => 
         array (
