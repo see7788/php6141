@@ -20,7 +20,7 @@
 //declare(ticks=1);
 namespace app;
 use GatewayWorker\Lib\Gateway as Cli;
-class BusinessWebSocket
+class BusinessEvent
 {
     public static function onWebSocketConnect($client_id, $data)
     {

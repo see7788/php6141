@@ -1,1 +1,3 @@
 GatewayWorker 统一配置模板
+
+要重命名replace_vendor用到的vendor里的类成其他类名，如类名Old
