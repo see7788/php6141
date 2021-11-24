@@ -11,6 +11,7 @@
  * @link      http://www.workerman.net/
  * @license   http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Workerman\Connection;
 
 use Workerman\Events\EventInterface;
@@ -24,9 +25,13 @@ use Workerman\Worker;
  */
 class TcpConnection extends ConnectionInterface
 {
+    function ext_send_json_encode($any): self
+    {
+        $this->send(json_encode($any));
+        return $this;
+    }
 
-
-    function ext_send_sseCreate(): self
+    function ext_send_sse_create(): self
     {
         $this->send(new Response(200, array('Content-Type' => 'text/event-stream')));
         return $this;
@@ -38,13 +43,13 @@ class TcpConnection extends ConnectionInterface
      * @param array $data
      * @return self
      */
-    function ext_send_sseSend(array $data): self
+    function ext_send_sse_send(array $data): self
     {
         $this->send(new ServerSentEvents($data));
         return $this;
     }
 
-    function ext_send_sseWeb():self
+    function ext_send_sseDemo(): self
     {
         $port = $this->getLocalPort();
         $this->send(
@@ -79,24 +84,89 @@ class TcpConnection extends ConnectionInterface
         return $this;
     }
 
-    function ext_send_chunkCreate($str): self
+    function ext_send_socketDemo(string $socketUrl): self
+    {
+        $port = $this->getLocalPort();
+        $this->send(
+            "
+                <script crossorigin='anonymous' src='https://cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.min.js'></script>
+                <div id='app'>{{message}}</div>
+                <script>
+                    //判断当前浏览器是否支持WebSocket
+                    if (!window.WebSocket) {
+                        alert('当前浏览器 Not support websocket')
+                    }
+                    let wsUrl='$socketUrl'
+                    let websocket = new WebSocket(wsUrl);
+                    let heartCheck = {
+                            timeout: 60000,//60秒
+                            timeoutObj: null,
+                            serverTimeoutObj: null,
+                            reset: function(){
+                                clearTimeout(this.timeoutObj);
+                                clearTimeout(this.serverTimeoutObj);
+                                return this;
+                            },
+                            start: function(){
+                                let self = this;
+                                this.timeoutObj = setTimeout(function(){
+                                    websocket.send('HeartBeat');
+                                }, this.timeout)
+                            }
+                        }
+                    websocket.onclose = function () {
+                        websocket = new WebSocket(wsUrl)
+                    };
+                    websocket.onerror = function () {
+                        websocket = new WebSocket(wsUrl)
+                    };
+                    websocket.onopen = function () {
+                        heartCheck.reset().start(); //心跳检测重置
+                    };    
+                    new Vue({
+                                el: '#app',
+                                data: {
+                                    message: {},
+                                },
+                                methods: {
+                                    onmessage(e){
+                                        console.log(e.data);
+                                        heartCheck.reset().start();
+                                       let db=JSON.parse(e.data);
+                                        if(Object.keys(db).indexOf('input'))
+                                        this.message = e.data
+                                    }
+                                },
+                                created: function () {
+                                    websocket.onmessage=this.onmessage
+                                }
+                             })
+                </script>
+                "
+        );
+        return $this;
+    }
+
+    function ext_send_chunk_create($str): self
     {
         $response = new Response(200, array('Transfer-Encoding' => 'chunked'), $str);
         $this->send($response);
         return $this;
     }
 
-    function ext_send_chunkSend($str = '没有参数'): self
+    function ext_send_chunk_db($str = '没有参数'): self
     {
         $this->send(new Chunk($str));
         return $this;
     }
 
-    function ext_send_chunkClose(): self
+    function ext_send_chunk_close(): self
     {
         $this->send(new Chunk(''));
         return $this;
     }
+
+
     /**
      * Read buffer size.
      *
@@ -245,7 +315,7 @@ class TcpConnection extends ConnectionInterface
      * @var int
      */
     public $maxPackageSize = 1048576;
-    
+
     /**
      * Default maximum acceptable packet size.
      *
@@ -329,24 +399,24 @@ class TcpConnection extends ConnectionInterface
      * @var array
      */
     public static $_statusToString = array(
-        self::STATUS_INITIAL     => 'INITIAL',
-        self::STATUS_CONNECTING  => 'CONNECTING',
+        self::STATUS_INITIAL => 'INITIAL',
+        self::STATUS_CONNECTING => 'CONNECTING',
         self::STATUS_ESTABLISHED => 'ESTABLISHED',
-        self::STATUS_CLOSING     => 'CLOSING',
-        self::STATUS_CLOSED      => 'CLOSED',
+        self::STATUS_CLOSING => 'CLOSING',
+        self::STATUS_CLOSED => 'CLOSED',
     );
 
     /**
      * Construct.
      *
      * @param resource $socket
-     * @param string   $remote_address
+     * @param string $remote_address
      */
     public function __construct($socket, $remote_address = '')
     {
         ++self::$statistics['connection_count'];
         $this->id = $this->_id = self::$_idRecorder++;
-        if(self::$_idRecorder === \PHP_INT_MAX){
+        if (self::$_idRecorder === \PHP_INT_MAX) {
             self::$_idRecorder = 0;
         }
         $this->_socket = $socket;
@@ -356,9 +426,9 @@ class TcpConnection extends ConnectionInterface
             \stream_set_read_buffer($this->_socket, 0);
         }
         Worker::$globalEvent->add($this->_socket, EventInterface::EV_READ, array($this, 'baseRead'));
-        $this->maxSendBufferSize        = self::$defaultMaxSendBufferSize;
-        $this->maxPackageSize           = self::$defaultMaxPackageSize;
-        $this->_remoteAddress           = $remote_address;
+        $this->maxSendBufferSize = self::$defaultMaxSendBufferSize;
+        $this->maxPackageSize = self::$defaultMaxPackageSize;
+        $this->_remoteAddress = $remote_address;
         static::$connections[$this->id] = $this;
     }
 
@@ -381,7 +451,7 @@ class TcpConnection extends ConnectionInterface
      * Sends data on the connection.
      *
      * @param mixed $send_buffer
-     * @param bool  $raw
+     * @param bool $raw
      * @return bool|null
      */
     public function send($send_buffer, $raw = false)
@@ -392,7 +462,7 @@ class TcpConnection extends ConnectionInterface
 
         // Try to call protocol::encode($send_buffer) before sending.
         if (false === $raw && $this->protocol !== null) {
-            $parser      = $this->protocol;
+            $parser = $this->protocol;
             $send_buffer = $parser::encode($send_buffer, $this);
             if ($send_buffer === '') {
                 return;
@@ -479,7 +549,7 @@ class TcpConnection extends ConnectionInterface
     {
         $pos = \strrpos($this->_remoteAddress, ':');
         if ($pos) {
-            return (string) \substr($this->_remoteAddress, 0, $pos);
+            return (string)\substr($this->_remoteAddress, 0, $pos);
         }
         return '';
     }
@@ -492,7 +562,7 @@ class TcpConnection extends ConnectionInterface
     public function getRemotePort()
     {
         if ($this->_remoteAddress) {
-            return (int) \substr(\strrchr($this->_remoteAddress, ':'), 1);
+            return (int)\substr(\strrchr($this->_remoteAddress, ':'), 1);
         }
         return 0;
     }
@@ -622,7 +692,6 @@ class TcpConnection extends ConnectionInterface
     }
 
 
-
     /**
      * Base read handler.
      *
@@ -647,7 +716,9 @@ class TcpConnection extends ConnectionInterface
         $buffer = '';
         try {
             $buffer = @\fread($socket, self::READ_BUFFER_SIZE);
-        } catch (\Exception $e) {} catch (\Error $e) {}
+        } catch (\Exception $e) {
+        } catch (\Error $e) {
+        }
 
         // Check connection closed.
         if ($buffer === '' || $buffer === false) {
@@ -674,7 +745,9 @@ class TcpConnection extends ConnectionInterface
                     // Get current package length.
                     try {
                         $this->_currentPackageLength = $parser::input($this->_recvBuffer, $this);
-                    } catch (\Exception $e) {} catch (\Error $e) {}
+                    } catch (\Exception $e) {
+                    } catch (\Error $e) {
+                    }
                     // The packet length is unknown.
                     if ($this->_currentPackageLength === 0) {
                         break;
@@ -696,7 +769,7 @@ class TcpConnection extends ConnectionInterface
                 // The current packet length is equal to the length of the buffer.
                 if (\strlen($this->_recvBuffer) === $this->_currentPackageLength) {
                     $one_request_buffer = $this->_recvBuffer;
-                    $this->_recvBuffer  = '';
+                    $this->_recvBuffer = '';
                 } else {
                     // Get a full package from the buffer.
                     $one_request_buffer = \substr($this->_recvBuffer, 0, $this->_currentPackageLength);
@@ -748,7 +821,8 @@ class TcpConnection extends ConnectionInterface
      */
     public function baseWrite()
     {
-        \set_error_handler(function(){});
+        \set_error_handler(function () {
+        });
         if ($this->transport === 'ssl') {
             $len = @\fwrite($this->_socket, $this->_sendBuffer, 8192);
         } else {
@@ -789,31 +863,32 @@ class TcpConnection extends ConnectionInterface
      * @param resource $socket
      * @return bool
      */
-    public function doSslHandshake($socket){
+    public function doSslHandshake($socket)
+    {
         if (\feof($socket)) {
             $this->destroy();
             return false;
         }
         $async = $this instanceof AsyncTcpConnection;
-        
+
         /**
-          *  We disabled ssl3 because https://blog.qualys.com/ssllabs/2014/10/15/ssl-3-is-dead-killed-by-the-poodle-attack.
-          *  You can enable ssl3 by the codes below.
-          */
+         *  We disabled ssl3 because https://blog.qualys.com/ssllabs/2014/10/15/ssl-3-is-dead-killed-by-the-poodle-attack.
+         *  You can enable ssl3 by the codes below.
+         */
         /*if($async){
             $type = STREAM_CRYPTO_METHOD_SSLv2_CLIENT | STREAM_CRYPTO_METHOD_SSLv23_CLIENT | STREAM_CRYPTO_METHOD_SSLv3_CLIENT;
         }else{
             $type = STREAM_CRYPTO_METHOD_SSLv2_SERVER | STREAM_CRYPTO_METHOD_SSLv23_SERVER | STREAM_CRYPTO_METHOD_SSLv3_SERVER;
         }*/
-        
-        if($async){
+
+        if ($async) {
             $type = \STREAM_CRYPTO_METHOD_SSLv2_CLIENT | \STREAM_CRYPTO_METHOD_SSLv23_CLIENT;
-        }else{
+        } else {
             $type = \STREAM_CRYPTO_METHOD_SSLv2_SERVER | \STREAM_CRYPTO_METHOD_SSLv23_SERVER;
         }
-        
+
         // Hidden error.
-        \set_error_handler(function($errno, $errstr, $file){
+        \set_error_handler(function ($errno, $errstr, $file) {
             if (!Worker::$daemonize) {
                 Worker::safeEcho("SSL handshake error: $errstr \n");
             }
@@ -848,14 +923,14 @@ class TcpConnection extends ConnectionInterface
      */
     public function pipe(self $dest)
     {
-        $source              = $this;
-        $this->onMessage     = function ($source, $data) use ($dest) {
+        $source = $this;
+        $this->onMessage = function ($source, $data) use ($dest) {
             $dest->send($data);
         };
-        $this->onClose       = function ($source) use ($dest) {
+        $this->onClose = function ($source) use ($dest) {
             $dest->close();
         };
-        $dest->onBufferFull  = function ($dest) use ($source) {
+        $dest->onBufferFull = function ($dest) use ($source) {
             $source->pauseRecv();
         };
         $dest->onBufferDrain = function ($dest) use ($source) {
@@ -883,7 +958,7 @@ class TcpConnection extends ConnectionInterface
      */
     public function close($data = null, $raw = false)
     {
-        if($this->_status === self::STATUS_CONNECTING){
+        if ($this->_status === self::STATUS_CONNECTING) {
             $this->destroy();
             return;
         }
@@ -897,7 +972,7 @@ class TcpConnection extends ConnectionInterface
         }
 
         $this->_status = self::STATUS_CLOSING;
-        
+
         if ($this->_sendBuffer === '') {
             $this->destroy();
         } else {
@@ -957,7 +1032,7 @@ class TcpConnection extends ConnectionInterface
         }
         return false;
     }
-    
+
     /**
      * Whether send buffer is Empty.
      *
@@ -965,7 +1040,7 @@ class TcpConnection extends ConnectionInterface
      */
     public function bufferIsEmpty()
     {
-    	return empty($this->_sendBuffer);
+        return empty($this->_sendBuffer);
     }
 
     /**
@@ -986,7 +1061,9 @@ class TcpConnection extends ConnectionInterface
         // Close socket.
         try {
             @\fclose($this->_socket);
-        } catch (\Exception $e) {} catch (\Error $e) {}
+        } catch (\Exception $e) {
+        } catch (\Error $e) {
+        }
 
         $this->_status = self::STATUS_CLOSED;
         // Try to emit onClose callback.
@@ -1041,7 +1118,7 @@ class TcpConnection extends ConnectionInterface
                 Worker::log('worker[' . \posix_getpid() . '] remains ' . self::$statistics['connection_count'] . ' connection(s)');
             }
 
-            if(0 === self::$statistics['connection_count']) {
+            if (0 === self::$statistics['connection_count']) {
                 Worker::stopAll();
             }
         }

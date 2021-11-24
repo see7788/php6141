@@ -28,22 +28,22 @@ class Request
         return $this->header('accept') === 'text/event-stream';
     }
 
-    function ext_path($defRouterName): string
+    function ext_isOnLine(): bool
+    {
+        return $this->connection->getStatus() !== TcpConnection::STATUS_ESTABLISHED;
+    }
+    function ext_router($index='index'): string
     {
         $path=$this->path();
         $api = $this->get('api');
         if ($api){
             $defRouterName=$api;
-        }else if(strstr('/',$path)){
-            $arr = explode('/',  $path);
+        }else {
+            $arr = explode('/',  $path)?:[];
             $arr = array_filter($arr);
-            $defRouterName = end($arr);
+            $defRouterName = end($arr)?:$index;
         }
         return strtolower($defRouterName);
-    }
-    function ext_isOnLine(): bool
-    {
-        return $this->connection->getStatus() !== TcpConnection::STATUS_ESTABLISHED;
     }
 
     /**
