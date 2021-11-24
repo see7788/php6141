@@ -8,8 +8,16 @@ use GatewayWorker\Gateway;
 use GatewayWorker\Lib\Gateway as PhpCli;
 use Workerman\Worker;
 
-class Index
+class ConfigStart
 {
+    public const mysqlConfig = [
+        '127.0.0.1',
+        '3306',
+        'douyintaobao',
+        '8x2BXw5PrEw8PKyD',
+        'douyintaobao'
+    ];
+    public const redisConfig='127.0.0.1:6379';
     public string $registerIp = '127.0.0.1';
     public string $registerPort = '6006';
     public string $secretKey = '6006RegisterPass';

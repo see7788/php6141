@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use app\Index;
+use app\ConfigStart;
 use Workerman\Worker;
 ini_set('display_errors', 'on');
 
@@ -25,7 +25,7 @@ if(!extension_loaded('posix'))
 // 如果不是在根目录启动，则运行runAll方法
 if(!defined('GLOBAL_START'))
 {
-    new Index();
+    new ConfigStart();
     define('GLOBAL_START', 1);
     Worker::runAll();
 }

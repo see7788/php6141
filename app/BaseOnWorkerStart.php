@@ -5,7 +5,7 @@ use Workerman\Worker;
 use Workerman\Http\Client as AsyncHttpCli;
 use Workerman\MySQL\Connection as PdoCli;
 use Workerman\Redis\Client as RedisCli;
-class Base
+class BaseOnWorkerStart
 {
     /**
      * @var PdoCli;
@@ -22,14 +22,8 @@ class Base
 
     public function onWorkerStart(Worker $c)
     {
-        $this->pdo=new PdoCli(
-            '127.0.0.1',
-            '3306',
-            'douyintaobao',
-            '8x2BXw5PrEw8PKyD',
-            'douyintaobao'
-        );
-        $this->redis = new RedisCli('redis://127.0.0.1:6379');
+        $this->pdo=new PdoCli(...ConfigStart::mysqlConfig );
+        $this->redis = new RedisCli('redis://'.ConfigStart::redisConfig);
         $this->http = new AsyncHttpCli();
       //  echo $c->name.$c->id.'Start;';
     }

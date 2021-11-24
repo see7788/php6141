@@ -7,7 +7,7 @@ use Workerman\Connection\TcpConnection;
 use Workerman\Protocols\Http\Request;
 use GatewayWorker\Lib\Gateway as Cli;
 
-class JKHttp extends Base
+class JKHttp extends BaseOnWorkerStart
 {
     public  function onConnect(TcpConnection $connection)
     {
