@@ -84,7 +84,7 @@ class TcpConnection extends ConnectionInterface
         return $this;
     }
 
-    function ext_send_socketDemo(string $socketUrl): self
+    function ext_send_socketDemo(string $socketUrl ,string $demoDb): self
     {
         $port = $this->getLocalPort();
         $this->send(
@@ -126,7 +126,7 @@ class TcpConnection extends ConnectionInterface
                     new Vue({
                                 el: '#app',
                                 data: {
-                                    message: {},
+                                    message:'$demoDb',
                                 },
                                 methods: {
                                     onmessage(e){

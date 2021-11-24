@@ -1,3 +1,4 @@
-GatewayWorker 统一配置模板
+GatewayWorker 统一配置模板，拓展核心功能
 
 要重命名replace_vendor用到的vendor里的类成其他类名，如类名Old
+不然无法使用拓展功能哦

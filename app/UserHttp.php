@@ -25,10 +25,10 @@ class UserHttp extends BaseOnWorkerStart
                 case 'favicon.ico':
                     return false;
                 case 'index':
-                    return $connection->ext_send_socketDemo('ws://39.97.216.195:6007');
+                    return $connection->ext_send_socketDemo('ws://39.97.216.195:6007','');
                 case 'all':
                    // $sbIds=$request->get('sbIds',[]);
-                    $this->redis->hGetAll('wsj.*', function ($data) use ($db, $connection) {
+                    $this->redis->hGetAll('fjId.*', function ($data) use ($db, $connection) {
                         $db['success'] = $data;
                         $connection->ext_send_json_encode($db);
                     });

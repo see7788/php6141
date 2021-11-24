@@ -9,6 +9,7 @@ use GatewayWorker\Lib\Gateway as PhpCli;
 use Workerman\Worker;
 
 //要重命名replace_vendor用到的vendor里的类成其他类名，如类名Old
+//不然无法使用拓展功能哦
 class ConfigStart
 {
     public const mysqlConfig = [
@@ -60,6 +61,7 @@ class ConfigStart
         $u->name = self::registerPort . 'UserHttp';
         self::bindOns($u, new UserHttp());
 
+        //恒华4d
         $j = new Worker('http://0.0.0.0:6009');
         $j->count = 4;
         $j->name = self::registerPort . 'JKHttp';

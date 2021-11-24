@@ -3,6 +3,7 @@
     "keywords": ["composer dump-autoload","mysql","redis","worker","client","distributed","communication","Gateway"],
     "homepage": "https://github.com/see7788/php6141",
     "license" : "MIT",
+    "type": "project",
     "require": {
         "workerman/gateway-worker" : ">=3.0.0",
         "workerman/http-client": "^0.1.7",
