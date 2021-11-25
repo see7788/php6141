@@ -1,6 +1,6 @@
 {
     "name"  : "see7788/php6141",
-    "keywords": ["composer dump-autoload","composer create-project see7788/php6141 yourAppName","mysql","redis","worker","client","distributed","communication","Gateway"],
+    "keywords": ["composer dump-autoload","mysql","redis","worker","client","distributed","communication","Gateway"],
     "homepage": "https://github.com/see7788/php6141",
     "license" : "MIT",
     "version": "3.0.0",
