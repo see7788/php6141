@@ -19,32 +19,44 @@
  */
 //declare(ticks=1);
 namespace app;
+
 use GatewayWorker\Lib\Gateway as Cli;
-class BusinessEvent
+
+class BusinessEvent extends BaseOnWorkerStart
 {
     public static function onWebSocketConnect($client_id, $data)
     {
-       echo 'onWebSocketConnect';
-        Cli::sendToClient($client_id,json_encode([
-            'api'=>'userInit',
-            'id'=>$client_id
-        ]));
-       // var_export($data);
-       // var_export($_SERVER);
-       // var_export($_SESSION);
+        if (isset($data['cookie'][self::uidCookeFileName])) {
+            Cli::bindUid($client_id, isset($data['cookie'][self::uidCookeFileName]));
+            Cli::sendToClient($client_id, json_encode([
+                'api' => 'userInit',
+                'info' => 'success',
+            ]));
+        } else {
+            Cli::sendToClient($client_id, json_encode([
+                'api' => 'userInit',
+                'info' => 'error',
+            ]));
+        }
+        //var_export($data);
+        // var_export($_SERVER);
+        // var_export($_SESSION);
     }
 
-    public static function onConnect($client_id)
+    /*public static function onConnect($client_id)
     {
-        var_export('onConnect');
-        Cli::sendToClient($client_id,json_encode([
-            'api'=>'userInit',
-            'id'=>$client_id
+        Cli::sendToClient($client_id, json_encode([
+            'api' => 'userInit',
+            'id' => $client_id
         ]));
-    }
+    }*/
 
     public static function onMessage($client_id, $message)
     {
-       var_export($message);
+        var_export($message);
+        /* Cli::sendToClient($client_id, json_encode([
+             'api' => 'userInit',
+             'id' => $client_id
+         ]));*/
     }
 }

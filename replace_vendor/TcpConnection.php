@@ -14,10 +14,10 @@
 
 namespace Workerman\Connection;
 
+use php6141\tcp\Res;
+use php6141\tcp\ResChunk;
+use php6141\tcp\ResSse;
 use Workerman\Events\EventInterface;
-use Workerman\Protocols\Http\Chunk;
-use Workerman\Protocols\Http\Response;
-use Workerman\Protocols\Http\ServerSentEvents;
 use Workerman\Worker;
 
 /**
@@ -25,147 +25,21 @@ use Workerman\Worker;
  */
 class TcpConnection extends ConnectionInterface
 {
-    function ext_send_json_encode($any): self
+
+    function ext_sseCreate(): ResSse
     {
-        $this->send(json_encode($any));
-        return $this;
+        return new ResSse($this);
     }
 
-    function ext_send_sse_create(): self
+    function ext_chunkCreate(string $str): ResChunk
     {
-        $this->send(new Response(200, array('Content-Type' => 'text/event-stream')));
-        return $this;
+        return new ResChunk($this,$str);
     }
 
-    /**
-     * ServerSentEvents constructor.
-     * $data for example ['event'=>'ping', 'data' => 'some thing', 'id' => 1000, 'retry' => 5000]
-     * @param array $data
-     * @return self
-     */
-    function ext_send_sse_send(array $data): self
+    function ext_response(): Res
     {
-        $this->send(new ServerSentEvents($data));
-        return $this;
+        return new Res($this);
     }
-
-    function ext_send_sseDemo(): self
-    {
-        $port = $this->getLocalPort();
-        $this->send(
-            "
-                <script crossorigin='anonymous' src='vue.js'></script>
-                <div id='app'>{{message}}</div>
-                <script>
-                       //let socket = new WebSocket('ws://'+document.domain+':$port');
-                       let sse = new EventSource(document.domain+':$port/sseget');
-                       new Vue({
-                                el: '#app',
-                                data: {
-                                    message: '0',
-                                },
-                                methods: {
-                                    init(e){
-                                        console.log(e)
-                                        this.message = e.data
-                                    }
-                                },
-                                created: function () {
-                                    sse.onmessage=function(e) {
-                                        console.log(e)
-                                    }
-                                   sse.addEventListener('init', this.init); 
-                                   sse.addEventListener('on', this.init);
-                                }
-                             })
-                </script>
-                "
-        );
-        return $this;
-    }
-
-    function ext_send_socketDemo(string $socketUrl ,string $demoDb): self
-    {
-        $port = $this->getLocalPort();
-        $this->send(
-            "
-                <script crossorigin='anonymous' src='https://cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.min.js'></script>
-                <div id='app'>{{message}}</div>
-                <script>
-                    //判断当前浏览器是否支持WebSocket
-                    if (!window.WebSocket) {
-                        alert('当前浏览器 Not support websocket')
-                    }
-                    let wsUrl='$socketUrl'
-                    let websocket = new WebSocket(wsUrl);
-                    let heartCheck = {
-                            timeout: 60000,//60秒
-                            timeoutObj: null,
-                            serverTimeoutObj: null,
-                            reset: function(){
-                                clearTimeout(this.timeoutObj);
-                                clearTimeout(this.serverTimeoutObj);
-                                return this;
-                            },
-                            start: function(){
-                                let self = this;
-                                this.timeoutObj = setTimeout(function(){
-                                    websocket.send('HeartBeat');
-                                }, this.timeout)
-                            }
-                        }
-                    websocket.onclose = function () {
-                        websocket = new WebSocket(wsUrl)
-                    };
-                    websocket.onerror = function () {
-                        websocket = new WebSocket(wsUrl)
-                    };
-                    websocket.onopen = function () {
-                        heartCheck.reset().start(); //心跳检测重置
-                    };    
-                    new Vue({
-                                el: '#app',
-                                data: {
-                                    message:'$demoDb',
-                                },
-                                methods: {
-                                    onmessage(e){
-                                        console.log(e.data);
-                                        heartCheck.reset().start();
-                                       let db=JSON.parse(e.data);
-                                        if(Object.keys(db).indexOf('input'))
-                                        this.message = e.data
-                                    }
-                                },
-                                created: function () {
-                                    websocket.onmessage=this.onmessage
-                                }
-                             })
-                </script>
-                "
-        );
-        return $this;
-    }
-
-    function ext_send_chunk_create($str): self
-    {
-        $response = new Response(200, array('Transfer-Encoding' => 'chunked'), $str);
-        $this->send($response);
-        return $this;
-    }
-
-    function ext_send_chunk_db($str = '没有参数'): self
-    {
-        $this->send(new Chunk($str));
-        return $this;
-    }
-
-    function ext_send_chunk_close(): self
-    {
-        $this->send(new Chunk(''));
-        return $this;
-    }
-
 
     /**
      * Read buffer size.

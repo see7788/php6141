@@ -6,36 +6,39 @@ use Exception;
 use Workerman\Connection\TcpConnection;
 use Workerman\Protocols\Http\Request;
 use GatewayWorker\Lib\Gateway as Cli;
+use Workerman\Protocols\Http\Response;
 
 class UserHttp extends BaseOnWorkerStart
 {
-    public  function onConnect(TcpConnection $connection)
+
+    public function onConnect(TcpConnection $connection)
     {
-        echo $connection->worker->name . 'onConnect;';
+        //echo $connection->worker->name . 'onConnect;';
         //$connection->send('onConnect');
     }
 
-    public  function onMessage(TcpConnection $connection, Request $request)
+    public static function onMessage(TcpConnection $connection, Request $request)
     {
         try {
             $db = $request->get();
             $path = $request->ext_router();
             $db['api'] = $path;
             switch ($path) {
-                case 'favicon.ico':
-                    return false;
                 case 'index':
-                    return $connection->ext_send_socketDemo('ws://39.97.216.195:6007','');
-                case 'all':
-                   // $sbIds=$request->get('sbIds',[]);
-                    $this->redis->hGetAll('fjId.*', function ($data) use ($db, $connection) {
-                        $db['success'] = $data;
-                        $connection->ext_send_json_encode($db);
+                   self::$redis->hVals('房间', function ($initInfo) use ($db, $connection) {
+                       $connection->ext_response()->ext_withBody_websocket(
+                            "ws://39.97.216.195:6007",
+                            $initInfo
+                        )->cookie(
+                           self::uidCookeFileName,
+                            '11111111111'
+                        )->send();
                     });
                     break;
+                case 'favicon.ico':
                 default:
                     $db['routerInfo'] = 404;
-                    $connection->ext_send_json_encode($db);
+                    $connection->send(json_encode($db));
             }
         } catch (Exception $e) {
             echo $connection->worker->name . ' catch;';

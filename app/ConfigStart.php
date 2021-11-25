@@ -47,9 +47,9 @@ class ConfigStart
         $g->name = self::registerPort . 'Gateway';
         $g->secretKey = self::registerKey;//秘钥
         $g->startPort = 2900;//内部通讯起始端口，每个 gateway 实例应该都不同，步长1000
-        $g->count = 4;
-        //$g->pingInterval = 10;// 心跳间隔
-        //$g->pingData = '{"api":"心跳"}';// 心跳数据
+        $g->count = 1;
+        $g->pingInterval = 10;// 心跳间隔
+        $g->pingData = '{"api":"心跳"}';// 心跳数据
         $g->lanIp = $registerIp;//本机ip，如果是分布式部署，需要设置成本机 IP
 
         //phpCli，允许多ip， 使用GatewayWorker\Lib\Gateway控制GatewayWorker\Gateway
