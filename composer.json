@@ -13,10 +13,10 @@
     },
     "autoload": {
         "psr-4": {
-            "app\\": "./app",
-            "php6141\\": "./src"
+            "app\\": "app/",
+            "php6141\\": "src/"
         },
-        "classmap": ["./replace_vendor"],
+        "classmap": ["replace_vendor/"],
         "files": []
     }
 }
