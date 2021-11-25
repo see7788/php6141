@@ -7,6 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'Workerman\\Connection\\TcpConnection' => $baseDir . '/replace_vendor/TcpConnection.php',
-    'Workerman\\Protocols\\Http\\Request' => $baseDir . '/replace_vendor/Request.php',
 );

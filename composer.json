@@ -1,25 +1,36 @@
 {
-    "name"  : "see7788/php6141",
-    "keywords": ["composer dump-autoload","mysql","redis","worker","client","distributed","communication","Gateway"],
-    "homepage": "https://github.com/see7788/php6141",
-    "license" : "MIT",
-    "version": "3.0.0",
-    "require": {
-        "workerman/gateway-worker" : ">=3.0.0",
-        "workerman/http-client": "^0.1.7",
-        "workerman/globaldata": "^1.0",
-        "workerman/redis": "^1.0",
-        "workerman/mysql": "^1.0"
+  "name": "see7788/php6141",
+  "keywords": [
+    "composer dump-autoload",
+    "mysql",
+    "redis",
+    "worker",
+    "client",
+    "distributed",
+    "communication",
+    "Gateway"
+  ],
+  "homepage": "https://github.com/see7788/php6141",
+  "license": "MIT",
+  "require": {
+    "workerman/gateway-worker": ">=3.0.0",
+    "workerman/http-client": "^0.1.7",
+    "workerman/globaldata": "^1.0",
+    "workerman/redis": "^1.0",
+    "workerman/mysql": "^1.0",
+    "ext-json": "*"
+  },
+  "replace": {
+    "workerman/workerman": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "app\\": "app/",
+      "php6141\\": "src/package/",
+      "Workerman\\": "src/vendorOldSet/workerman"
     },
-    "autoload": {
-        "psr-4": {
-            "app\\": "app/",
-            "php6141\\": "src/"
-        },
-        "classmap": ["replace_vendor/"],
-        "exclude-from-classmap": [
-
-        ],
-        "files": []
-    }
+    "classmap": [],
+    "exclude-from-classmap": [],
+    "files": []
+  }
 }

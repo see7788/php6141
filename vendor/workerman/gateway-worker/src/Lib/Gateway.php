@@ -1132,6 +1132,7 @@ class Gateway
         if ($raw) {
             $gateway_data['flag'] |= GatewayProtocol::FLAG_NOT_CALL_ENCODE;
         }
+
         return static::sendToGateway($address, $gateway_data);
     }
 
