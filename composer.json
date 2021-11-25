@@ -1,7 +1,9 @@
 {
   "name": "see7788/php6141",
+  "minimum-stability":"dev",
   "keywords": [
     "composer dump-autoload",
+    "",
     "mysql",
     "redis",
     "worker",

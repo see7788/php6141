@@ -37,7 +37,6 @@ class Res extends Response
                                 return this;
                             },
                             start: function(){
-                                let self = this;
                                 this.timeoutObj = setTimeout(function(){
                                     websocket.send('{\"api\":\"心跳\"}');
                                 }, this.timeout)
