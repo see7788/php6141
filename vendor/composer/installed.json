@@ -2,23 +2,24 @@
     "packages": [
         {
             "name": "psr/http-message",
-            "version": "1.0.1",
-            "version_normalized": "1.0.1.0",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-message.git",
-                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363"
+                "reference": "efd67d1dc14a7ef4fc4e518e7dee91c271d524e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-message/zipball/f6561bf28d520154e4b0ec72be95418abe6d9363",
-                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/efd67d1dc14a7ef4fc4e518e7dee91c271d524e4",
+                "reference": "efd67d1dc14a7ef4fc4e518e7dee91c271d524e4",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2016-08-06T14:39:51+00:00",
+            "time": "2019-08-29T13:16:46+00:00",
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -58,23 +59,24 @@
         },
         {
             "name": "workerman/gateway-worker",
-            "version": "v3.0.20",
-            "version_normalized": "3.0.20.0",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/GatewayWorker.git",
-                "reference": "75b21653b3eaa99c4d5ae84ce8c5b27cda96d095"
+                "reference": "23bd35cf80a5019beee18b9c0f5898b98cdcab7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/GatewayWorker/zipball/75b21653b3eaa99c4d5ae84ce8c5b27cda96d095",
-                "reference": "75b21653b3eaa99c4d5ae84ce8c5b27cda96d095",
+                "url": "https://api.github.com/repos/walkor/GatewayWorker/zipball/23bd35cf80a5019beee18b9c0f5898b98cdcab7e",
+                "reference": "23bd35cf80a5019beee18b9c0f5898b98cdcab7e",
                 "shasum": ""
             },
             "require": {
                 "workerman/workerman": ">=3.5.0"
             },
-            "time": "2021-04-13T13:19:21+00:00",
+            "time": "2021-07-22T06:56:38+00:00",
+            "default-branch": true,
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -93,7 +95,7 @@
             ],
             "support": {
                 "issues": "https://github.com/walkor/GatewayWorker/issues",
-                "source": "https://github.com/walkor/GatewayWorker/tree/v3.0.20"
+                "source": "https://github.com/walkor/GatewayWorker/tree/master"
             },
             "install-path": "../workerman/gateway-worker"
         },
@@ -219,8 +221,8 @@
         },
         {
             "name": "workerman/psr7",
-            "version": "v1.4.4",
-            "version_normalized": "1.4.4.0",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/psr7.git",
@@ -243,6 +245,7 @@
                 "phpunit/phpunit": "~4.0"
             },
             "time": "2020-08-31T09:54:31+00:00",
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
