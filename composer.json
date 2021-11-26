@@ -10,6 +10,7 @@
     "communication",
     "Gateway"
   ],
+  "type": "project",
   "homepage": "https://github.com/see7788/php6141",
   "license": "MIT",
   "require": {
