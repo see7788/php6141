@@ -11,6 +11,9 @@
     "Gateway"
   ],
   "type": "project",
+  "branch-alias": {
+    "dev-master": "1.0.x-dev"
+  },
   "homepage": "https://github.com/see7788/php6141",
   "license": "MIT",
   "require": {
