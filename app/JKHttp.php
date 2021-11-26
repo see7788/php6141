@@ -31,9 +31,9 @@ class JKHttp extends BaseOnWorkerStart
                     break;
                 case 'input':
                     //http://39.97.216.195:6009/input?fjId=0001&kw=16
-                    $fjId = $request->get('fjId', '?');
-                    $data = (array)json_decode($db['data']);
-                    if($data){
+                    if($request->post('status')==1){
+                        $fjId = $request->get('fjId', '?');
+                        $data = (array)json_decode($db['data']);
                         $inNum=$data['InNum'];
                         $outNum=$data['OutNum'];
                         $db2 = array(
@@ -54,7 +54,7 @@ class JKHttp extends BaseOnWorkerStart
                         ]);
                         Cli::sendToAll($db3);
                     }else{
-                        echo '空数据';
+                        echo '心跳';
                     }
                     break;
                 default:
